@@ -2,22 +2,30 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#define TRANSPILED_FILE ".a.out.c"
 FILE *in;
 FILE *a_out;
 char out[10000];
 char current;
 char cmd[100] = "gcc ";
 int cmdlen = 4;
-#ifdef CLANG
-cmd = "clang ";
+#ifdef CUSTOM_COMPILE_COMMAND
+cmd = CUSTOM_COMPILE_COMMAND;
 cmdlen = 6;
 #endif
 
 int main(int argc, char *argv[]) {
+#ifdef CUSTOM_COMPILE_COMMAND
+    for (int cci = 0; cmd[cci] != NULL; cci++){
+        cmdlen = cci;
+    }
+    cmd[cmdlen + 1] = '\ ';
+cmdlen++;
+#endif
   if (argc > 2) {
     a_out = fopen(argv[2], "w+");
   } else {
-    a_out = fopen(".a.out.c", "w+");
+    a_out = fopen(TRANSPILED_FILE, "w+");
   }
   in = fopen(argv[1], "r");
   if (in == NULL) {
@@ -44,18 +52,18 @@ break;
       return 1;
     } else {
       out[i] = current;
-      if (isprint(out[i]))
-        printf("%c", out[i]);
-      else
-        printf("%02X\n", out[i]);
+      //if (isprint(out[i]))
+        //printf("%c", out[i]);
+      //else
+        //printf("%02X\n", out[i]);
     }
     i++;
   }
-  printf("here\n");
+  //printf("here\n");
   fprintf(a_out, "%s", out);
   fclose(a_out);
-  printf("here\n");
-  for (int j = 0; ".a.out.c"[j] != '\0'; j++) {
+  //printf("here\n");
+  for (int j = 0; TRANSPILED_FILE[j] != '\0'; j++) {
     // cmd = (char *)malloc(sizeof(char));
     cmd[cmdlen + j] = ".a.out.c"[j];
   }
